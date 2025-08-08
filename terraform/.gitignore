@@ -19,6 +19,7 @@ crash.*.log
 !prod.tfvars
 !staging.tfvars
 !terraform.tfvars.example
+!terraform.tfvars
 
 # Arquivos de plan
 *.tfplan

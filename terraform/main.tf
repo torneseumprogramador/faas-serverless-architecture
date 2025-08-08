@@ -75,30 +75,19 @@ resource "aws_api_gateway_rest_api" "api" {
   description = "API Gateway para ${var.project_name}"
 }
 
-# Recurso raiz
+# Recurso raiz para CORS
 resource "aws_api_gateway_resource" "proxy" {
   rest_api_id = aws_api_gateway_rest_api.api.id
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
   path_part   = "{proxy+}"
 }
 
-# Método ANY para o proxy
+# Método ANY para o proxy (CORS)
 resource "aws_api_gateway_method" "proxy" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
   resource_id   = aws_api_gateway_resource.proxy.id
   http_method   = "ANY"
   authorization = "NONE"
-}
-
-# Integração com Lambda
-resource "aws_api_gateway_integration" "lambda" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.proxy.id
-  http_method = aws_api_gateway_method.proxy.http_method
-
-  integration_http_method = "POST"
-  type                   = "AWS_PROXY"
-  uri                    = aws_lambda_function.get_products.invoke_arn
 }
 
 # Método OPTIONS para CORS
@@ -152,19 +141,11 @@ resource "aws_api_gateway_integration_response" "proxy_options" {
 # Deployment da API
 resource "aws_api_gateway_deployment" "api" {
   depends_on = [
-    aws_api_gateway_integration.lambda,
+    aws_api_gateway_integration.products_get_integration,
+    aws_api_gateway_integration.products_id_get_integration,
     aws_api_gateway_integration.lambda_options,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = var.environment
-}
-
-# Permissão para API Gateway invocar Lambda
-resource "aws_lambda_permission" "api_gateway" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.get_products.function_name
-  principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
+  stage_name  = var.api_gateway_stage_name
 }

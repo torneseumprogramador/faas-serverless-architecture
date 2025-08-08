@@ -33,26 +33,39 @@ npm install -g serverless
 
 ### 🆕 Deploy com Terraform (Recomendado)
 
-#### Deploy para Desenvolvimento
+#### Deploy Rápido com Scripts
+```bash
+# Deploy para desenvolvimento
+./terraform/deploy.sh dev
+
+# Deploy para staging
+./terraform/deploy.sh staging
+
+# Deploy para produção
+./terraform/deploy.sh prod
+```
+
+#### Deploy com Makefile
+```bash
+# Ver todos os comandos disponíveis
+make help
+
+# Deploy para desenvolvimento
+make deploy-dev
+
+# Deploy para staging
+make deploy-staging
+
+# Deploy para produção
+make deploy-prod
+```
+
+#### Deploy Manual
 ```bash
 cd terraform
 terraform init
 terraform plan
 terraform apply
-```
-
-#### Deploy para Staging
-```bash
-cd terraform
-terraform plan -var-file="staging.tfvars"
-terraform apply -var-file="staging.tfvars"
-```
-
-#### Deploy para Produção
-```bash
-cd terraform
-terraform plan -var-file="prod.tfvars"
-terraform apply -var-file="prod.tfvars"
 ```
 
 ### 🔄 Deploy com Serverless Framework (Legado)
@@ -145,6 +158,24 @@ faas-serverless-architecture/
 ## 🔧 Comandos Úteis
 
 ### 🆕 Terraform (Recomendado)
+
+#### Scripts Automatizados
+- `./terraform/deploy.sh [dev|staging|prod]` - Deploy automatizado
+- `./terraform/destroy.sh [dev|staging|prod]` - Destruir infraestrutura
+
+#### Makefile
+- `make help` - Ver todos os comandos disponíveis
+- `make deploy-dev` - Deploy para desenvolvimento
+- `make deploy-staging` - Deploy para staging
+- `make deploy-prod` - Deploy para produção
+- `make destroy-dev` - Destruir desenvolvimento
+- `make destroy-staging` - Destruir staging
+- `make destroy-prod` - Destruir produção
+- `make status` - Verificar status da infraestrutura
+- `make logs` - Ver logs das funções
+- `make clean` - Limpar arquivos temporários
+
+#### Comandos Terraform Diretos
 - `terraform init` - Inicializar Terraform
 - `terraform plan` - Verificar plano de mudanças
 - `terraform apply` - Aplicar mudanças
@@ -168,7 +199,32 @@ serverless logs -f getProductById
 ## 🗑️ Limpeza
 
 ### 🆕 Terraform (Recomendado)
-Para remover todos os recursos:
+
+#### Limpeza Rápida com Scripts
+```bash
+# Destruir infraestrutura de desenvolvimento
+./terraform/destroy.sh dev
+
+# Destruir infraestrutura de staging
+./terraform/destroy.sh staging
+
+# Destruir infraestrutura de produção
+./terraform/destroy.sh prod
+```
+
+#### Limpeza com Makefile
+```bash
+# Destruir infraestrutura de desenvolvimento
+make destroy-dev
+
+# Destruir infraestrutura de staging
+make destroy-staging
+
+# Destruir infraestrutura de produção
+make destroy-prod
+```
+
+#### Limpeza Manual
 ```bash
 cd terraform
 terraform destroy

@@ -1,60 +1,334 @@
-# API Serverless - Lista de Produtos
+# 🚀 FaaS Serverless Architecture - API de Produtos
 
-Uma API serverless construída com AWS Lambda e API Gateway para gerenciar uma lista de produtos. **Agora com suporte a Terraform para portabilidade entre provedores de nuvem!**
+## 📚 Sobre o Projeto
 
-## 🚀 Tecnologias
+Este projeto foi desenvolvido como uma **API de Produtos** utilizando **Function as a Service (FaaS)** com **AWS Lambda** e **API Gateway**, demonstrando arquitetura serverless moderna e boas práticas de desenvolvimento.
 
-- **AWS Lambda** - Funções serverless
-- **API Gateway** - Gerenciamento de APIs
-- **Terraform** - Infraestrutura como Código (IaC)
-- **Node.js** - Runtime
+### 🎯 Objetivo
+
+Implementar uma API REST completa para gerenciamento de produtos utilizando arquitetura serverless, com funcionalidades CRUD (Create, Read, Update, Delete) e validações robustas.
+
+## 🏗️ Arquitetura
+
+O projeto segue uma **arquitetura serverless** com separação clara de responsabilidades:
+
+```
+┌─────────────────────────────────────┐
+│           API Gateway               │ ← Endpoints REST
+├─────────────────────────────────────┤
+│         Lambda Functions            │ ← Handlers (HTTP)
+├─────────────────────────────────────┤
+│         Controllers                 │ ← Lógica de requisições
+├─────────────────────────────────────┤
+│          Services                   │ ← Lógica de negócio
+├─────────────────────────────────────┤
+│        Repositories                 │ ← Acesso a dados
+├─────────────────────────────────────┤
+│         Entities                    │ ← Validações e estrutura
+├─────────────────────────────────────┤
+│         DynamoDB                   │ ← Banco de dados NoSQL
+└─────────────────────────────────────┘
+```
+
+### 📁 Estrutura do Projeto
+
+```
+faas-serverless-architecture/
+├── src/
+│   ├── handlers/                     # Handlers das funções Lambda
+│   │   ├── getProducts.js
+│   │   ├── getProductById.js
+│   │   ├── createProduct.js
+│   │   ├── updateProduct.js
+│   │   └── deleteProduct.js
+│   ├── controllers/                  # Controllers para gerenciar requisições HTTP
+│   │   └── productController.js
+│   ├── services/                     # Services para lógica de negócio
+│   │   └── productService.js
+│   ├── repositories/                 # Repositories para acesso a dados
+│   │   └── productRepository.js
+│   ├── entities/                     # Entidades com estrutura e validações
+│   │   ├── Product.js
+│   │   └── index.js
+│   └── utils/                        # Utilitários
+├── scripts/                          # Scripts de teste e automação
+│   ├── interactive-api.sh           # Script interativo para testar API
+│   └── README.md                     # Documentação dos scripts
+├── terraform/                        # Infraestrutura como Código
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── lambda.tf
+│   ├── dynamodb.tf
+│   ├── outputs.tf
+│   ├── prod.tfvars
+│   ├── deploy.sh
+│   └── destroy.sh
+├── package.json                      # Dependências Node.js
+├── Makefile                          # Comandos de automação
+└── README.md                         # Esta documentação
+```
+
+## 🚀 Tecnologias Utilizadas
+
+- **AWS Lambda** - Computação serverless
+- **API Gateway** - Gerenciamento de APIs REST
+- **DynamoDB** - Banco de dados NoSQL
+- **Terraform** - Infrastructure as Code (IaC)
+- **Node.js** - Runtime JavaScript
+- **AWS SDK v3** - SDK oficial da AWS
+- **Shell Scripting** - Automação de deploy
 
 ## 📋 Pré-requisitos
 
-- Node.js 18+
-- AWS CLI configurado
-- Terraform (versão >= 1.0)
+- [AWS CLI](https://aws.amazon.com/cli/) configurado
+- [Terraform](https://www.terraform.io/) instalado
+- [Node.js](https://nodejs.org/) (versão 18+)
+- [Make](https://www.gnu.org/software/make/) (opcional, para automação)
+- [curl](https://curl.se/) e [jq](https://jqlang.github.io/jq/) (para testes)
 
-## 🛠️ Instalação
+## ⚡ Como Executar
 
-1. **Instalar Terraform:**
+### Método Rápido (Recomendado)
+
 ```bash
-# macOS
-brew install terraform
+# Clone o repositório
+git clone <url-do-repositorio>
+cd faas-serverless-architecture
 
-# Ubuntu/Debian
-sudo apt-get install terraform
+# Instalar dependências
+make install
 
-# Windows
-# Baixe de https://www.terraform.io/downloads.html
-```
-
-2. **Configurar AWS CLI:**
-```bash
-aws configure
-```
-
-## 🚀 Deploy
-
-### 🆕 Deploy com Terraform (Recomendado)
-
-#### Deploy Rápido com Scripts
-```bash
 # Deploy para desenvolvimento
-./terraform/deploy.sh dev
+make deploy-dev
 
-# Deploy para staging
-./terraform/deploy.sh staging
-
-# Deploy para produção
-./terraform/deploy.sh prod
+# Testar a API
+make test-interactive
 ```
 
-#### Deploy com Makefile
-```bash
-# Ver todos os comandos disponíveis
-make help
+### Método Manual
 
+```bash
+# 1. Instalar dependências
+npm install
+
+# 2. Deploy da infraestrutura
+cd terraform
+./deploy.sh dev
+cd ..
+
+# 3. Testar a API
+./scripts/interactive-api.sh
+```
+
+### Comandos Disponíveis no Makefile
+
+```bash
+make help              # Mostrar ajuda
+make install           # Instalar dependências
+make deploy-dev        # Deploy para desenvolvimento
+make deploy-staging    # Deploy para staging
+make deploy-prod       # Deploy para produção
+make destroy-dev       # Destruir infraestrutura de desenvolvimento
+make test-interactive  # Executar script interativo
+make test-url          # Mostrar URL da API
+make test-endpoints    # Mostrar todos os endpoints
+make logs              # Ver logs das funções Lambda
+make clean             # Limpar arquivos temporários
+```
+
+## 🌐 Acessando a API
+
+Após o deploy, a API estará disponível em:
+
+- **API Base**: `https://[api-id].execute-api.sa-east-1.amazonaws.com/dev`
+- **Endpoints**: Veja a seção de endpoints abaixo
+
+## 📖 Endpoints da API
+
+### 📦 Produtos (Products)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/products` | Listar todos os produtos |
+| GET | `/products/{id}` | Buscar produto por ID |
+| POST | `/products` | Criar novo produto |
+| PUT | `/products/{id}` | Atualizar produto |
+| DELETE | `/products/{id}` | Remover produto |
+
+## 🏛️ Arquitetura Implementada
+
+### 📦 Entidades de Domínio
+
+- **Product** - Entidade principal com validações
+  - Validação de nome (2-100 caracteres)
+  - Validação de preço (positivo)
+  - Validação de estoque (boolean)
+  - Normalização automática de dados
+
+### 🔄 Camadas da Aplicação
+
+- **Handlers** - Ponto de entrada das funções Lambda
+- **Controllers** - Gerenciamento de requisições HTTP
+- **Services** - Lógica de negócio
+- **Repositories** - Acesso a dados (DynamoDB)
+- **Entities** - Estrutura e validações
+
+### 🛡️ Validações Implementadas
+
+- **Nome**: 2-100 caracteres, obrigatório
+- **Preço**: Número positivo, obrigatório
+- **Estoque**: Boolean, opcional (padrão: true)
+- **Categoria**: String, opcional
+- **Imagem**: URL, opcional
+
+## 🧪 Exemplos de Uso
+
+### Listar Todos os Produtos
+
+```bash
+curl -X GET "https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products"
+```
+
+### Buscar Produto por ID
+
+```bash
+curl -X GET "https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products/1"
+```
+
+### Criar Produto
+
+```bash
+curl -X POST "https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "iPhone 15 Pro",
+    "description": "Smartphone Apple com chip A17 Pro",
+    "price": 8999,
+    "category": "Eletrônicos",
+    "inStock": true,
+    "image": "https://example.com/iphone15pro.jpg"
+  }'
+```
+
+### Atualizar Produto
+
+```bash
+curl -X PUT "https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products/1" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "iPhone 15 Pro Max",
+    "price": 9999
+  }'
+```
+
+### Deletar Produto
+
+```bash
+curl -X DELETE "https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products/1"
+```
+
+## 🛠️ Scripts de Teste
+
+### 📊 Script Interativo
+
+Para facilitar os testes, criamos um script interativo completo:
+
+```bash
+# Executar script interativo
+make test-interactive
+
+# Ou diretamente
+./scripts/interactive-api.sh
+```
+
+### 🎯 Funcionalidades do Script
+
+- **Detecção automática da URL** via Terraform
+- **Interface colorida e profissional**
+- **Teste de conectividade** antes das operações
+- **Validação de entrada** e formatação JSON
+- **Menu completo** com todas as operações CRUD
+
+### 📋 Opções Disponíveis
+
+1. **Configurar URL da API** - Configuração manual
+2. **Listar todos os produtos** - GET /products
+3. **Buscar produto por ID** - GET /products/{id}
+4. **Criar novo produto** - POST /products
+5. **Atualizar produto** - PUT /products/{id}
+6. **Deletar produto** - DELETE /products/{id}
+7. **Testar todos os endpoints** - Teste completo
+8. **Mostrar URL atual** - Informações da API
+9. **Sair** - Encerrar script
+
+## 🛡️ Tratamento de Erros
+
+A API possui um sistema robusto de tratamento de erros que garante respostas consistentes:
+
+### 📋 Tipos de Erro
+
+| Código | Tipo | Descrição |
+|--------|------|-----------|
+| 400 | `ValidationError` | Erro de validação (nome inválido, preço negativo, etc.) |
+| 404 | `NotFoundError` | Produto não encontrado |
+| 500 | `InternalServerError` | Erro interno do servidor |
+
+### 📝 Formato da Resposta de Erro
+
+```json
+{
+  "success": false,
+  "message": "Dados inválidos: Nome deve ter entre 2 e 100 caracteres",
+  "error": "ValidationError",
+  "timestamp": "2025-08-08T11:00:00.000Z"
+}
+```
+
+### 📝 Formato da Resposta de Sucesso
+
+```json
+{
+  "success": true,
+  "message": "Produto criado com sucesso",
+  "data": {
+    "id": 6,
+    "name": "iPhone 15 Pro",
+    "description": "Smartphone Apple com chip A17 Pro",
+    "price": 8999,
+    "category": "Eletrônicos",
+    "inStock": true,
+    "image": "https://example.com/iphone15pro.jpg",
+    "createdAt": "2025-08-08T11:00:00.000Z",
+    "updatedAt": "2025-08-08T11:00:00.000Z"
+  }
+}
+```
+
+## 🔧 Configuração da Infraestrutura
+
+O projeto utiliza **Terraform** para gerenciar toda a infraestrutura na AWS:
+
+### 🏗️ Recursos Criados
+
+- **API Gateway** - Endpoints REST
+- **Lambda Functions** - 5 funções (CRUD + listagem)
+- **DynamoDB Table** - Armazenamento de produtos
+- **IAM Roles & Policies** - Permissões de acesso
+- **CloudWatch Logs** - Monitoramento e logs
+
+### 📊 Variáveis de Ambiente
+
+```bash
+NODE_ENV=dev                    # Ambiente de execução
+DYNAMODB_TABLE=products         # Nome da tabela DynamoDB
+AWS_REGION=sa-east-1           # Região AWS
+```
+
+## 🚀 Deploy e Infraestrutura
+
+### 📦 Deploy Automatizado
+
+```bash
 # Deploy para desenvolvimento
 make deploy-dev
 
@@ -65,400 +339,62 @@ make deploy-staging
 make deploy-prod
 ```
 
-#### Deploy Manual
+### 🗑️ Destruir Infraestrutura
+
 ```bash
-cd terraform
-terraform init
-terraform plan
-terraform apply
-```
-
-
-
-## 🧪 Teste Local
-
-### Script Interativo (Recomendado)
-```bash
-# Executar script interativo
-./scripts/interactive-api.sh
-```
-
-O script oferece uma interface amigável para testar todos os endpoints da API.
-
-### Testar API Deployada (Manual)
-```bash
-# Listar produtos
-curl -X GET https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products
-
-# Buscar produto por ID
-curl -X GET https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products/1
-```
-
-Substitua `[api-id]` pelo ID da sua API (mostrado no output do Terraform).
-
-### 📜 Scripts Disponíveis
-
-- **`scripts/interactive-api.sh`** - Script interativo para testar a API
-- **`scripts/README.md`** - Documentação detalhada dos scripts
-
-Veja a documentação completa em: [scripts/README.md](scripts/README.md)
-
-## 📡 Endpoints
-
-### GET /products
-Retorna a lista completa de produtos.
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "message": "Produtos recuperados com sucesso",
-  "data": {
-    "products": [...],
-    "total": 5,
-    "timestamp": "2024-01-15T10:30:00.000Z"
-  }
-}
-```
-
-### GET /products/{id}
-Retorna um produto específico pelo ID.
-
-**Exemplo:** `GET /products/1`
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "message": "Produto encontrado com sucesso",
-  "data": {
-    "product": {
-      "id": 1,
-      "name": "iPhone 15 Pro",
-      "description": "Smartphone Apple com chip A17 Pro e câmera tripla",
-      "price": 8999.00,
-      "category": "Eletrônicos",
-      "inStock": true,
-      "image": "https://example.com/iphone15pro.jpg",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "updatedAt": "2024-01-15T10:30:00.000Z"
-    },
-    "timestamp": "2024-01-15T10:30:00.000Z"
-  }
-}
-```
-
-### POST /products
-Cria um novo produto.
-
-**Exemplo:** `POST /products`
-
-**Body:**
-```json
-{
-  "name": "MacBook Pro M3",
-  "description": "Notebook Apple com chip M3 e tela Retina",
-  "price": 15999.00,
-  "category": "Eletrônicos",
-  "inStock": true,
-  "image": "https://example.com/macbook-pro.jpg"
-}
-```
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "message": "Produto criado com sucesso",
-  "data": {
-    "product": {
-      "id": 6,
-      "name": "MacBook Pro M3",
-      "description": "Notebook Apple com chip M3 e tela Retina",
-      "price": 15999.00,
-      "category": "Eletrônicos",
-      "inStock": true,
-      "image": "https://example.com/macbook-pro.jpg",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "updatedAt": "2024-01-15T10:30:00.000Z"
-    },
-    "timestamp": "2024-01-15T10:30:00.000Z"
-  }
-}
-```
-
-### PUT /products/{id}
-Atualiza um produto existente.
-
-**Exemplo:** `PUT /products/1`
-
-**Body:**
-```json
-{
-  "name": "iPhone 15 Pro Max",
-  "price": 9999.00,
-  "inStock": false
-}
-```
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "message": "Produto atualizado com sucesso",
-  "data": {
-    "product": {
-      "id": 1,
-      "name": "iPhone 15 Pro Max",
-      "description": "Smartphone Apple com chip A17 Pro e câmera tripla",
-      "price": 9999.00,
-      "category": "Eletrônicos",
-      "inStock": false,
-      "image": "https://example.com/iphone15pro.jpg",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "updatedAt": "2024-01-15T10:35:00.000Z"
-    },
-    "timestamp": "2024-01-15T10:35:00.000Z"
-  }
-}
-```
-
-### DELETE /products/{id}
-Remove um produto.
-
-**Exemplo:** `DELETE /products/1`
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "message": "Produto deletado com sucesso",
-  "data": {
-    "deletedProduct": {
-      "id": 1,
-      "name": "iPhone 15 Pro",
-      "description": "Smartphone Apple com chip A17 Pro e câmera tripla",
-      "price": 8999.00,
-      "category": "Eletrônicos",
-      "inStock": true,
-      "image": "https://example.com/iphone15pro.jpg",
-      "createdAt": "2024-01-15T10:30:00.000Z",
-      "updatedAt": "2024-01-15T10:30:00.000Z"
-    },
-    "timestamp": "2024-01-15T10:35:00.000Z"
-  }
-}
-```
-
-## ✅ Validações
-
-A API inclui validações robustas para todos os campos:
-
-### Campos Obrigatórios (POST)
-- **name**: String com 2-100 caracteres
-- **description**: String com 10-500 caracteres  
-- **price**: Número maior que 0 e menor que 1.000.000
-- **category**: String com 2-50 caracteres
-
-### Campos Opcionais
-- **inStock**: Boolean (padrão: true)
-- **image**: URL válida com protocolo HTTP/HTTPS
-
-### Validações Específicas
-- **Preço**: Deve ser um número válido maior que zero
-- **Estoque**: Aceita boolean, string "true"/"false", ou números 0/1
-- **Imagem**: Se fornecida, deve ser uma URL válida
-- **Strings**: São automaticamente normalizadas (trim)
-
-### Exemplo de Erro de Validação
-```json
-{
-  "success": false,
-  "message": "Dados inválidos",
-  "errors": [
-    "Nome deve ter pelo menos 2 caracteres",
-    "Preço deve ser maior que zero",
-    "URL da imagem deve ser uma URL válida"
-  ]
-}
-```
-
-## 🏗️ Arquitetura
-
-O projeto segue uma arquitetura em camadas bem definida:
-
-### 📋 Camadas da Aplicação
-
-1. **Handlers** (`src/handlers/`)
-   - Ponto de entrada das funções Lambda
-   - Delegam para os controllers
-   - Mantêm-se simples e focados
-
-2. **Controllers** (`src/controllers/`)
-   - Gerenciam requisições HTTP
-   - Tratam parsing de dados e respostas
-   - Delegam lógica de negócio para services
-
-3. **Services** (`src/services/`)
-   - Contêm a lógica de negócio
-   - Orquestram operações complexas
-   - Utilizam entidades para validação
-
-4. **Entities** (`src/entities/`)
-   - Definem estrutura dos dados
-   - Implementam validações e normalizações
-   - Garantem consistência dos dados
-
-5. **Repositories** (`src/repositories/`)
-   - Abstraem acesso a dados
-   - Implementam operações CRUD
-   - Isolam detalhes do DynamoDB
-
-6. **Utils** (`src/utils/`)
-   - Funções utilitárias reutilizáveis
-   - Helpers compartilhados
-
-### 🔄 Fluxo de Dados
-```
-HTTP Request → Handler → Controller → Service → Entity → Repository → DynamoDB
-```
-
-### 🎯 Benefícios da Arquitetura
-- **Separação de Responsabilidades**: Cada camada tem uma função específica
-- **Testabilidade**: Fácil de testar cada camada isoladamente
-- **Manutenibilidade**: Código organizado e fácil de manter
-- **Escalabilidade**: Fácil de adicionar novas funcionalidades
-- **Reutilização**: Services e repositories podem ser reutilizados
-
-## 📊 Estrutura do Projeto
-
-```
-faas-serverless-architecture/
-├── src/
-│   ├── handlers/          # Handlers das funções Lambda
-│   │   ├── getProducts.js
-│   │   ├── getProductById.js
-│   │   ├── createProduct.js
-│   │   ├── updateProduct.js
-│   │   └── deleteProduct.js
-│   ├── controllers/       # Controllers para gerenciar requisições HTTP
-│   │   └── productController.js
-│   ├── services/          # Services para lógica de negócio
-│   │   └── productService.js
-│   ├── repositories/      # Repositories para acesso a dados
-│   │   └── productRepository.js
-│   ├── entities/          # Entidades com estrutura e validações
-│   │   ├── Product.js
-│   │   └── index.js
-│   └── utils/             # Utilitários
-├── scripts/               # Scripts de teste e automação
-│   ├── interactive-api.sh # Script interativo para testar API
-│   └── README.md          # Documentação dos scripts
-├── terraform/             # Infraestrutura como Código
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── lambda.tf
-│   ├── dynamodb.tf
-│   ├── outputs.tf
-│   ├── prod.tfvars
-│   ├── staging.tfvars
-│   ├── terraform.tfvars
-│   ├── terraform.tfvars.example
-│   ├── deploy.sh
-│   ├── destroy.sh
-│   ├── .gitignore
-│   └── README.md
-├── Makefile            # Comandos automatizados
-├── package.json
-└── README.md
-```
-
-## 🔧 Comandos Úteis
-
-### 🚀 Terraform
-
-#### Scripts Automatizados
-- `./terraform/deploy.sh [dev|staging|prod]` - Deploy automatizado
-- `./terraform/destroy.sh [dev|staging|prod]` - Destruir infraestrutura
-
-#### Makefile
-- `make help` - Ver todos os comandos disponíveis
-- `make deploy-dev` - Deploy para desenvolvimento
-- `make deploy-staging` - Deploy para staging
-- `make deploy-prod` - Deploy para produção
-- `make destroy-dev` - Destruir desenvolvimento
-- `make destroy-staging` - Destruir staging
-- `make destroy-prod` - Destruir produção
-- `make status` - Verificar status da infraestrutura
-- `make logs` - Ver logs das funções
-- `make clean` - Limpar arquivos temporários
-
-#### Comandos Terraform Diretos
-- `terraform init` - Inicializar Terraform
-- `terraform plan` - Verificar plano de mudanças
-- `terraform apply` - Aplicar mudanças
-- `terraform destroy` - Remover recursos
-- `terraform output` - Ver outputs
-
-## 📝 Logs
-
-Para ver os logs das funções:
-```bash
-aws logs tail /aws/lambda/faas-products-api-get-products
-aws logs tail /aws/lambda/faas-products-api-get-product-by-id
-```
-
-## 🗑️ Limpeza
-
-### 🚀 Terraform
-
-#### Limpeza Rápida com Scripts
-```bash
-# Destruir infraestrutura de desenvolvimento
-./terraform/destroy.sh dev
-
-# Destruir infraestrutura de staging
-./terraform/destroy.sh staging
-
-# Destruir infraestrutura de produção
-./terraform/destroy.sh prod
-```
-
-#### Limpeza com Makefile
-```bash
-# Destruir infraestrutura de desenvolvimento
+# Destruir ambiente de desenvolvimento
 make destroy-dev
 
-# Destruir infraestrutura de staging
+# Destruir ambiente de staging
 make destroy-staging
 
-# Destruir infraestrutura de produção
+# Destruir ambiente de produção
 make destroy-prod
 ```
 
-#### Limpeza Manual
+### 📊 Monitoramento
+
 ```bash
-cd terraform
-terraform destroy
+# Ver logs das funções Lambda
+make logs
+
+# Ver status da infraestrutura
+make status
 ```
 
-## 🌍 Portabilidade entre Provedores
+## 🎓 Aprendizados do Projeto
 
-Com o Terraform, você pode facilmente migrar para outros provedores:
+Este projeto demonstra os seguintes conceitos:
 
-### Azure Functions
-- Substituir provider `aws` por `azurerm`
-- Adaptar recursos para Azure Functions
-- Usar Azure API Management
+1. **Serverless Architecture**
+   - Function as a Service (FaaS)
+   - Event-driven programming
+   - Pay-per-use model
 
-### Google Cloud Functions
-- Substituir provider `aws` por `google`
-- Adaptar para Cloud Functions
-- Usar Cloud Run ou Cloud Functions
+2. **Infrastructure as Code (IaC)**
+   - Terraform para provisionamento
+   - Versionamento de infraestrutura
+   - Multi-environment deployment
 
-### Benefícios da Migração
-- ✅ **Código reutilizável** entre provedores
-- ✅ **Configuração consistente** de ambientes
-- ✅ **Versionamento** da infraestrutura
-- ✅ **Rollback** fácil de mudanças
-- ✅ **Colaboração** em equipe
+3. **Arquitetura em Camadas**
+   - Separação de responsabilidades
+   - Clean Architecture principles
+   - Dependency injection
+
+4. **Boas Práticas**
+   - Error handling robusto
+   - Input validation
+   - Logging e monitoring
+   - Security best practices
+
+## 🤝 Contribuição
+
+Este projeto foi desenvolvido como demonstração de arquitetura serverless. Contribuições são bem-vindas através de issues e pull requests.
+
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+**Desenvolvido com ❤️ para demonstrar arquiteturas serverless modernas** 🚀

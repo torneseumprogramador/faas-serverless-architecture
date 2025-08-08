@@ -1,0 +1,38 @@
+service: faas-products-api
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: sa-east-1
+  stage: ${opt:stage, 'dev'}
+  environment:
+    NODE_ENV: ${self:provider.stage}
+
+functions:
+  getProducts:
+    handler: src/handlers/getProducts.handler
+    events:
+      - http:
+          path: /products
+          method: get
+          cors: true
+    memorySize: 128
+    timeout: 10
+
+  getProductById:
+    handler: src/handlers/getProductById.handler
+    events:
+      - http:
+          path: /products/{id}
+          method: get
+          cors: true
+    memorySize: 128
+    timeout: 10
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 3000
+    lambdaPort: 3002

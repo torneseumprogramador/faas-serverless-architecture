@@ -8,11 +8,13 @@ terraform {
     }
   }
   
-  backend "s3" {
-    bucket = "faas-terraform-state"
-    key    = "prod/terraform.tfstate"
-    region = "sa-east-1"
-  }
+  # Backend local para desenvolvimento
+  # Para usar S3, descomente as linhas abaixo e crie o bucket
+  # backend "s3" {
+  #   bucket = "faas-terraform-state"
+  #   key    = "prod/terraform.tfstate"
+  #   region = "sa-east-1"
+  # }
 }
 
 provider "aws" {
@@ -75,34 +77,19 @@ resource "aws_api_gateway_rest_api" "api" {
   description = "API Gateway para ${var.project_name}"
 }
 
-# Recurso raiz para CORS
-resource "aws_api_gateway_resource" "proxy" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
-  path_part   = "{proxy+}"
-}
-
-# Método ANY para o proxy (CORS)
-resource "aws_api_gateway_method" "proxy" {
+# Método OPTIONS para CORS no recurso raiz
+resource "aws_api_gateway_method" "root_options" {
   rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.proxy.id
-  http_method   = "ANY"
-  authorization = "NONE"
-}
-
-# Método OPTIONS para CORS
-resource "aws_api_gateway_method" "proxy_options" {
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  resource_id   = aws_api_gateway_resource.proxy.id
+  resource_id   = aws_api_gateway_rest_api.api.root_resource_id
   http_method   = "OPTIONS"
   authorization = "NONE"
 }
 
 # Integração OPTIONS
-resource "aws_api_gateway_integration" "lambda_options" {
+resource "aws_api_gateway_integration" "root_options" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.proxy.id
-  http_method = aws_api_gateway_method.proxy_options.http_method
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = aws_api_gateway_method.root_options.http_method
 
   type = "MOCK"
   request_templates = {
@@ -111,10 +98,10 @@ resource "aws_api_gateway_integration" "lambda_options" {
 }
 
 # Resposta OPTIONS
-resource "aws_api_gateway_method_response" "proxy_options" {
+resource "aws_api_gateway_method_response" "root_options" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.proxy.id
-  http_method = aws_api_gateway_method.proxy_options.http_method
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = aws_api_gateway_method.root_options.http_method
   status_code = "200"
 
   response_parameters = {
@@ -125,11 +112,11 @@ resource "aws_api_gateway_method_response" "proxy_options" {
 }
 
 # Integração de resposta OPTIONS
-resource "aws_api_gateway_integration_response" "proxy_options" {
+resource "aws_api_gateway_integration_response" "root_options" {
   rest_api_id = aws_api_gateway_rest_api.api.id
-  resource_id = aws_api_gateway_resource.proxy.id
-  http_method = aws_api_gateway_method.proxy_options.http_method
-  status_code = aws_api_gateway_method_response.proxy_options.status_code
+  resource_id = aws_api_gateway_rest_api.api.root_resource_id
+  http_method = aws_api_gateway_method.root_options.http_method
+  status_code = aws_api_gateway_method_response.root_options.status_code
 
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
@@ -138,14 +125,20 @@ resource "aws_api_gateway_integration_response" "proxy_options" {
   }
 }
 
+# Stage da API
+resource "aws_api_gateway_stage" "api" {
+  deployment_id = aws_api_gateway_deployment.api.id
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  stage_name    = var.api_gateway_stage_name
+}
+
 # Deployment da API
 resource "aws_api_gateway_deployment" "api" {
   depends_on = [
     aws_api_gateway_integration.products_get_integration,
     aws_api_gateway_integration.products_id_get_integration,
-    aws_api_gateway_integration.lambda_options,
+    aws_api_gateway_integration.root_options,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.api.id
-  stage_name  = var.api_gateway_stage_name
 }

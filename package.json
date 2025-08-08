@@ -1,21 +1,15 @@
 {
   "name": "faas-serverless-architecture",
   "version": "1.0.0",
-  "description": "API serverless para lista de produtos usando AWS Lambda",
+  "description": "API serverless para lista de produtos usando Terraform",
   "main": "index.js",
   "scripts": {
-    "deploy": "serverless deploy",
-    "remove": "serverless remove",
-    "logs": "serverless logs -f getProducts"
+    "test": "node -e \"console.log('API Functions ready for Terraform deployment')\"",
+    "clean": "rm -rf node_modules package-lock.json"
   },
-  "dependencies": {
-    "aws-sdk": "^2.1000.0"
-  },
-  "devDependencies": {
-    "serverless": "^3.0.0",
-    "serverless-offline": "^13.3.0"
-  },
-  "keywords": ["serverless", "faas", "aws", "lambda", "api"],
+  "dependencies": {},
+  "devDependencies": {},
+  "keywords": ["serverless", "faas", "terraform", "aws", "lambda", "api"],
   "author": "Danilo",
   "license": "MIT"
 }

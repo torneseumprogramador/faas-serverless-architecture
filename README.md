@@ -7,26 +7,31 @@ Uma API serverless construída com AWS Lambda e API Gateway para gerenciar uma l
 - **AWS Lambda** - Funções serverless
 - **API Gateway** - Gerenciamento de APIs
 - **Terraform** - Infraestrutura como Código (IaC)
-- **Serverless Framework** - Framework para deploy (legado)
 - **Node.js** - Runtime
 
 ## 📋 Pré-requisitos
 
 - Node.js 18+
 - AWS CLI configurado
-- Terraform (versão >= 1.0) - **Recomendado**
-- Serverless Framework - **Legado**
+- Terraform (versão >= 1.0)
 
 ## 🛠️ Instalação
 
-1. **Instalar dependências:**
+1. **Instalar Terraform:**
 ```bash
-npm install
+# macOS
+brew install terraform
+
+# Ubuntu/Debian
+sudo apt-get install terraform
+
+# Windows
+# Baixe de https://www.terraform.io/downloads.html
 ```
 
-2. **Instalar Serverless Framework globalmente:**
+2. **Configurar AWS CLI:**
 ```bash
-npm install -g serverless
+aws configure
 ```
 
 ## 🚀 Deploy
@@ -68,26 +73,20 @@ terraform plan
 terraform apply
 ```
 
-### 🔄 Deploy com Serverless Framework (Legado)
 
-#### Deploy para AWS
-```bash
-npm run deploy
-```
-
-#### Deploy para ambiente específico
-```bash
-serverless deploy --stage prod
-```
 
 ## 🧪 Teste Local
 
-### Executar localmente
+### Testar API Deployada
 ```bash
-serverless offline
+# Listar produtos
+curl -X GET https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products
+
+# Buscar produto por ID
+curl -X GET https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products/1
 ```
 
-A API estará disponível em: `http://localhost:3000`
+Substitua `[api-id]` pelo ID da sua API (mostrado no output do Terraform).
 
 ## 📡 Endpoints
 
@@ -142,22 +141,24 @@ faas-serverless-architecture/
 │   │   └── getProductById.js
 │   └── data/
 │       └── products.js
-├── terraform/           # 🆕 Infraestrutura como Código
+├── terraform/           # Infraestrutura como Código
 │   ├── main.tf
 │   ├── variables.tf
 │   ├── lambda.tf
 │   ├── outputs.tf
 │   ├── prod.tfvars
 │   ├── staging.tfvars
+│   ├── deploy.sh
+│   ├── destroy.sh
 │   └── README.md
-├── serverless.yml       # 🔄 Legado
+├── Makefile            # Comandos automatizados
 ├── package.json
 └── README.md
 ```
 
 ## 🔧 Comandos Úteis
 
-### 🆕 Terraform (Recomendado)
+### 🚀 Terraform
 
 #### Scripts Automatizados
 - `./terraform/deploy.sh [dev|staging|prod]` - Deploy automatizado
@@ -182,23 +183,17 @@ faas-serverless-architecture/
 - `terraform destroy` - Remover recursos
 - `terraform output` - Ver outputs
 
-### 🔄 Serverless Framework (Legado)
-- `npm run deploy` - Deploy para AWS
-- `npm run remove` - Remover recursos da AWS
-- `npm run logs` - Ver logs das funções
-- `serverless offline` - Executar localmente
-
 ## 📝 Logs
 
 Para ver os logs das funções:
 ```bash
-serverless logs -f getProducts
-serverless logs -f getProductById
+aws logs tail /aws/lambda/faas-products-api-get-products
+aws logs tail /aws/lambda/faas-products-api-get-product-by-id
 ```
 
 ## 🗑️ Limpeza
 
-### 🆕 Terraform (Recomendado)
+### 🚀 Terraform
 
 #### Limpeza Rápida com Scripts
 ```bash
@@ -228,12 +223,6 @@ make destroy-prod
 ```bash
 cd terraform
 terraform destroy
-```
-
-### 🔄 Serverless Framework (Legado)
-Para remover todos os recursos da AWS:
-```bash
-npm run remove
 ```
 
 ## 🌍 Portabilidade entre Provedores

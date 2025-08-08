@@ -1,11 +1,11 @@
 output "api_gateway_url" {
   description = "URL da API Gateway"
-  value       = "${aws_api_gateway_deployment.api.invoke_url}"
+  value       = aws_api_gateway_stage.api.invoke_url
 }
 
 output "api_gateway_stage_url" {
   description = "URL completa da API com stage"
-  value       = "${aws_api_gateway_deployment.api.invoke_url}${var.api_gateway_stage_name}"
+  value       = aws_api_gateway_stage.api.invoke_url
 }
 
 output "lambda_functions" {
@@ -27,8 +27,8 @@ output "lambda_functions" {
 output "api_endpoints" {
   description = "Endpoints da API"
   value = {
-    get_products     = "${aws_api_gateway_deployment.api.invoke_url}${var.api_gateway_stage_name}/products"
-    get_product_by_id = "${aws_api_gateway_deployment.api.invoke_url}${var.api_gateway_stage_name}/products/{id}"
+    get_products     = "${aws_api_gateway_stage.api.invoke_url}/products"
+    get_product_by_id = "${aws_api_gateway_stage.api.invoke_url}/products/{id}"
   }
 }
 

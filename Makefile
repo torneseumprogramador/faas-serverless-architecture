@@ -59,7 +59,6 @@ clean: ## Limpar arquivos temporários
 	rm -rf terraform/*.tfstate*
 	rm -rf terraform/lambda.zip
 	rm -rf node_modules
-	rm -rf .serverless
 
 terraform-init: ## Inicializar Terraform
 	@echo "$(GREEN)Inicializando Terraform...$(NC)"

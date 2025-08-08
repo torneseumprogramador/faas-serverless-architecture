@@ -62,14 +62,6 @@ if ! command -v node &> /dev/null; then
     exit 1
 fi
 
-# Verificar se as dependências estão instaladas
-if [ ! -d "../node_modules" ]; then
-    print_warning "Dependências Node.js não encontradas. Instalando..."
-    cd ..
-    npm install
-    cd terraform
-fi
-
 print_message "Dependências verificadas com sucesso!"
 
 # Inicializar Terraform

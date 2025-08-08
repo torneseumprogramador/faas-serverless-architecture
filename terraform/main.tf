@@ -29,23 +29,7 @@ provider "aws" {
   }
 }
 
-# S3 Bucket para armazenar o código das funções
-resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "${var.project_name}-lambda-${random_string.bucket_suffix.result}"
-}
 
-resource "aws_s3_bucket_versioning" "lambda_bucket_versioning" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-resource "random_string" "bucket_suffix" {
-  length  = 8
-  special = false
-  upper   = false
-}
 
 # IAM Role para as funções Lambda
 resource "aws_iam_role" "lambda_role" {

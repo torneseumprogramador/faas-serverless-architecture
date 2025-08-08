@@ -1,4 +1,4 @@
-const { getAllProducts } = require('../utils/dynamodb');
+const { deleteProduct, getProductById } = require('../utils/dynamodb');
 
 const createResponse = (statusCode, body) => ({
   statusCode,
@@ -15,14 +15,33 @@ exports.handler = async (event) => {
   try {
     console.log('Event:', JSON.stringify(event, null, 2));
     
-    const products = await getAllProducts();
+    // Extrair o ID do path parameter
+    const productId = parseInt(event.pathParameters?.id);
+    
+    if (!productId) {
+      return createResponse(400, {
+        success: false,
+        message: 'ID do produto é obrigatório'
+      });
+    }
+    
+    // Verificar se o produto existe
+    const existingProduct = await getProductById(productId);
+    if (!existingProduct) {
+      return createResponse(404, {
+        success: false,
+        message: `Produto com ID ${productId} não encontrado`
+      });
+    }
+    
+    // Deletar produto do DynamoDB
+    await deleteProduct(productId);
     
     const response = {
       success: true,
-      message: 'Produtos recuperados com sucesso',
+      message: 'Produto deletado com sucesso',
       data: {
-        products,
-        total: products.length,
+        deletedProduct: existingProduct,
         timestamp: new Date().toISOString()
       }
     };

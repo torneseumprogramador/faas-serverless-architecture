@@ -21,6 +21,21 @@ output "lambda_functions" {
       arn          = aws_lambda_function.get_product_by_id.arn
       invoke_arn   = aws_lambda_function.get_product_by_id.invoke_arn
     }
+    create_product = {
+      function_name = aws_lambda_function.create_product.function_name
+      arn          = aws_lambda_function.create_product.arn
+      invoke_arn   = aws_lambda_function.create_product.invoke_arn
+    }
+    update_product = {
+      function_name = aws_lambda_function.update_product.function_name
+      arn          = aws_lambda_function.update_product.arn
+      invoke_arn   = aws_lambda_function.update_product.invoke_arn
+    }
+    delete_product = {
+      function_name = aws_lambda_function.delete_product.function_name
+      arn          = aws_lambda_function.delete_product.arn
+      invoke_arn   = aws_lambda_function.delete_product.invoke_arn
+    }
   }
 }
 

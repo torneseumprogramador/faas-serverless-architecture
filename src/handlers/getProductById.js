@@ -1,4 +1,4 @@
-const products = require('../data/products');
+const { getProductById } = require('../utils/dynamodb');
 
 const createResponse = (statusCode, body) => ({
   statusCode,
@@ -26,7 +26,7 @@ exports.handler = async (event) => {
     }
     
     // Buscar o produto pelo ID
-    const product = products.find(p => p.id === productId);
+    const product = await getProductById(productId);
     
     if (!product) {
       return createResponse(404, {

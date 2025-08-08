@@ -7,7 +7,9 @@
     "test": "node -e \"console.log('API Functions ready for Terraform deployment')\"",
     "clean": "rm -rf node_modules package-lock.json"
   },
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.1000.0"
+  },
   "devDependencies": {},
   "keywords": ["serverless", "faas", "terraform", "aws", "lambda", "api"],
   "author": "Danilo",

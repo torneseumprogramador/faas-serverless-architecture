@@ -114,7 +114,10 @@ resource "aws_api_gateway_stage" "api" {
 resource "aws_api_gateway_deployment" "api" {
   depends_on = [
     aws_api_gateway_integration.products_get_integration,
+    aws_api_gateway_integration.products_post_integration,
     aws_api_gateway_integration.products_id_get_integration,
+    aws_api_gateway_integration.products_id_put_integration,
+    aws_api_gateway_integration.products_id_delete_integration,
     aws_api_gateway_integration.root_options,
   ]
 

@@ -1,5 +1,5 @@
 const ProductRepository = require('../repositories/productRepository');
-const { validateProduct, normalizeProductData } = require('../utils/validation');
+const { validateProduct, normalizeProductData } = require('../utils/productValidation');
 
 class ProductService {
   constructor() {

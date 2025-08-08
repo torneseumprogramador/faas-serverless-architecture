@@ -329,7 +329,7 @@ faas-serverless-architecture/
 │   ├── repositories/      # Repositories para acesso a dados
 │   │   └── productRepository.js
 │   └── utils/             # Utilitários
-│       └── validation.js
+│       └── productValidation.js
 ├── terraform/             # Infraestrutura como Código
 │   ├── main.tf
 │   ├── variables.tf

@@ -124,27 +124,217 @@ Retorna um produto específico pelo ID.
       "price": 8999.00,
       "category": "Eletrônicos",
       "inStock": true,
-      "image": "https://example.com/iphone15pro.jpg"
+      "image": "https://example.com/iphone15pro.jpg",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "updatedAt": "2024-01-15T10:30:00.000Z"
     },
     "timestamp": "2024-01-15T10:30:00.000Z"
   }
 }
 ```
 
+### POST /products
+Cria um novo produto.
+
+**Exemplo:** `POST /products`
+
+**Body:**
+```json
+{
+  "name": "MacBook Pro M3",
+  "description": "Notebook Apple com chip M3 e tela Retina",
+  "price": 15999.00,
+  "category": "Eletrônicos",
+  "inStock": true,
+  "image": "https://example.com/macbook-pro.jpg"
+}
+```
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "message": "Produto criado com sucesso",
+  "data": {
+    "product": {
+      "id": 6,
+      "name": "MacBook Pro M3",
+      "description": "Notebook Apple com chip M3 e tela Retina",
+      "price": 15999.00,
+      "category": "Eletrônicos",
+      "inStock": true,
+      "image": "https://example.com/macbook-pro.jpg",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "updatedAt": "2024-01-15T10:30:00.000Z"
+    },
+    "timestamp": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+### PUT /products/{id}
+Atualiza um produto existente.
+
+**Exemplo:** `PUT /products/1`
+
+**Body:**
+```json
+{
+  "name": "iPhone 15 Pro Max",
+  "price": 9999.00,
+  "inStock": false
+}
+```
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "message": "Produto atualizado com sucesso",
+  "data": {
+    "product": {
+      "id": 1,
+      "name": "iPhone 15 Pro Max",
+      "description": "Smartphone Apple com chip A17 Pro e câmera tripla",
+      "price": 9999.00,
+      "category": "Eletrônicos",
+      "inStock": false,
+      "image": "https://example.com/iphone15pro.jpg",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "updatedAt": "2024-01-15T10:35:00.000Z"
+    },
+    "timestamp": "2024-01-15T10:35:00.000Z"
+  }
+}
+```
+
+### DELETE /products/{id}
+Remove um produto.
+
+**Exemplo:** `DELETE /products/1`
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "message": "Produto deletado com sucesso",
+  "data": {
+    "deletedProduct": {
+      "id": 1,
+      "name": "iPhone 15 Pro",
+      "description": "Smartphone Apple com chip A17 Pro e câmera tripla",
+      "price": 8999.00,
+      "category": "Eletrônicos",
+      "inStock": true,
+      "image": "https://example.com/iphone15pro.jpg",
+      "createdAt": "2024-01-15T10:30:00.000Z",
+      "updatedAt": "2024-01-15T10:30:00.000Z"
+    },
+    "timestamp": "2024-01-15T10:35:00.000Z"
+  }
+}
+```
+
+## ✅ Validações
+
+A API inclui validações robustas para todos os campos:
+
+### Campos Obrigatórios (POST)
+- **name**: String com 2-100 caracteres
+- **description**: String com 10-500 caracteres  
+- **price**: Número maior que 0 e menor que 1.000.000
+- **category**: String com 2-50 caracteres
+
+### Campos Opcionais
+- **inStock**: Boolean (padrão: true)
+- **image**: URL válida com protocolo HTTP/HTTPS
+
+### Validações Específicas
+- **Preço**: Deve ser um número válido maior que zero
+- **Estoque**: Aceita boolean, string "true"/"false", ou números 0/1
+- **Imagem**: Se fornecida, deve ser uma URL válida
+- **Strings**: São automaticamente normalizadas (trim)
+
+### Exemplo de Erro de Validação
+```json
+{
+  "success": false,
+  "message": "Dados inválidos",
+  "errors": [
+    "Nome deve ter pelo menos 2 caracteres",
+    "Preço deve ser maior que zero",
+    "URL da imagem deve ser uma URL válida"
+  ]
+}
+```
+
+## 🏗️ Arquitetura
+
+O projeto segue uma arquitetura em camadas bem definida:
+
+### 📋 Camadas da Aplicação
+
+1. **Handlers** (`src/handlers/`)
+   - Ponto de entrada das funções Lambda
+   - Delegam para os controllers
+   - Mantêm-se simples e focados
+
+2. **Controllers** (`src/controllers/`)
+   - Gerenciam requisições HTTP
+   - Tratam parsing de dados e respostas
+   - Delegam lógica de negócio para services
+
+3. **Services** (`src/services/`)
+   - Contêm a lógica de negócio
+   - Implementam validações e regras
+   - Orquestram operações complexas
+
+4. **Repositories** (`src/repositories/`)
+   - Abstraem acesso a dados
+   - Implementam operações CRUD
+   - Isolam detalhes do DynamoDB
+
+5. **Utils** (`src/utils/`)
+   - Funções utilitárias reutilizáveis
+   - Validações e normalizações
+   - Helpers compartilhados
+
+### 🔄 Fluxo de Dados
+```
+HTTP Request → Handler → Controller → Service → Repository → DynamoDB
+```
+
+### 🎯 Benefícios da Arquitetura
+- **Separação de Responsabilidades**: Cada camada tem uma função específica
+- **Testabilidade**: Fácil de testar cada camada isoladamente
+- **Manutenibilidade**: Código organizado e fácil de manter
+- **Escalabilidade**: Fácil de adicionar novas funcionalidades
+- **Reutilização**: Services e repositories podem ser reutilizados
+
 ## 📊 Estrutura do Projeto
 
 ```
 faas-serverless-architecture/
 ├── src/
-│   ├── handlers/
+│   ├── handlers/          # Handlers das funções Lambda
 │   │   ├── getProducts.js
-│   │   └── getProductById.js
-│   └── data/
-│       └── products.js
-├── terraform/           # Infraestrutura como Código
+│   │   ├── getProductById.js
+│   │   ├── createProduct.js
+│   │   ├── updateProduct.js
+│   │   └── deleteProduct.js
+│   ├── controllers/       # Controllers para gerenciar requisições HTTP
+│   │   └── productController.js
+│   ├── services/          # Services para lógica de negócio
+│   │   └── productService.js
+│   ├── repositories/      # Repositories para acesso a dados
+│   │   └── productRepository.js
+│   └── utils/             # Utilitários
+│       └── validation.js
+├── terraform/             # Infraestrutura como Código
 │   ├── main.tf
 │   ├── variables.tf
 │   ├── lambda.tf
+│   ├── dynamodb.tf
 │   ├── outputs.tf
 │   ├── prod.tfvars
 │   ├── staging.tfvars

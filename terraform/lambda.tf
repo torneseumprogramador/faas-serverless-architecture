@@ -121,6 +121,30 @@ resource "aws_cloudwatch_log_group" "get_product_by_id_logs" {
   tags = var.tags
 }
 
+# CloudWatch Log Group para create_product
+resource "aws_cloudwatch_log_group" "create_product_logs" {
+  name              = "/aws/lambda/${aws_lambda_function.create_product.function_name}"
+  retention_in_days = 14
+  
+  tags = var.tags
+}
+
+# CloudWatch Log Group para update_product
+resource "aws_cloudwatch_log_group" "update_product_logs" {
+  name              = "/aws/lambda/${aws_lambda_function.update_product.function_name}"
+  retention_in_days = 14
+  
+  tags = var.tags
+}
+
+# CloudWatch Log Group para delete_product
+resource "aws_cloudwatch_log_group" "delete_product_logs" {
+  name              = "/aws/lambda/${aws_lambda_function.delete_product.function_name}"
+  retention_in_days = 14
+  
+  tags = var.tags
+}
+
 # API Gateway Resources e Methods para produtos
 resource "aws_api_gateway_resource" "products" {
   rest_api_id = aws_api_gateway_rest_api.api.id

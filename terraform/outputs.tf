@@ -43,7 +43,10 @@ output "api_endpoints" {
   description = "Endpoints da API"
   value = {
     get_products     = "${aws_api_gateway_stage.api.invoke_url}/products"
+    create_product   = "${aws_api_gateway_stage.api.invoke_url}/products"
     get_product_by_id = "${aws_api_gateway_stage.api.invoke_url}/products/{id}"
+    update_product   = "${aws_api_gateway_stage.api.invoke_url}/products/{id}"
+    delete_product   = "${aws_api_gateway_stage.api.invoke_url}/products/{id}"
   }
 }
 
@@ -52,10 +55,22 @@ output "cloudwatch_log_groups" {
   value = {
     get_products_logs     = aws_cloudwatch_log_group.get_products_logs.name
     get_product_by_id_logs = aws_cloudwatch_log_group.get_product_by_id_logs.name
+    create_product_logs   = aws_cloudwatch_log_group.create_product_logs.name
+    update_product_logs   = aws_cloudwatch_log_group.update_product_logs.name
+    delete_product_logs   = aws_cloudwatch_log_group.delete_product_logs.name
   }
 }
 
 
+
+output "dynamodb_table" {
+  description = "Informações da tabela DynamoDB"
+  value = {
+    table_name = aws_dynamodb_table.products.name
+    arn        = aws_dynamodb_table.products.arn
+    id         = aws_dynamodb_table.products.id
+  }
+}
 
 output "iam_role_arn" {
   description = "ARN do IAM Role"

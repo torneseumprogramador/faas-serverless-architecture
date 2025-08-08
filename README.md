@@ -1,19 +1,21 @@
 # API Serverless - Lista de Produtos
 
-Uma API serverless construída com AWS Lambda e API Gateway para gerenciar uma lista de produtos.
+Uma API serverless construída com AWS Lambda e API Gateway para gerenciar uma lista de produtos. **Agora com suporte a Terraform para portabilidade entre provedores de nuvem!**
 
 ## 🚀 Tecnologias
 
 - **AWS Lambda** - Funções serverless
 - **API Gateway** - Gerenciamento de APIs
-- **Serverless Framework** - Framework para deploy
+- **Terraform** - Infraestrutura como Código (IaC)
+- **Serverless Framework** - Framework para deploy (legado)
 - **Node.js** - Runtime
 
 ## 📋 Pré-requisitos
 
 - Node.js 18+
 - AWS CLI configurado
-- Serverless Framework
+- Terraform (versão >= 1.0) - **Recomendado**
+- Serverless Framework - **Legado**
 
 ## 🛠️ Instalação
 
@@ -29,12 +31,38 @@ npm install -g serverless
 
 ## 🚀 Deploy
 
-### Deploy para AWS
+### 🆕 Deploy com Terraform (Recomendado)
+
+#### Deploy para Desenvolvimento
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+#### Deploy para Staging
+```bash
+cd terraform
+terraform plan -var-file="staging.tfvars"
+terraform apply -var-file="staging.tfvars"
+```
+
+#### Deploy para Produção
+```bash
+cd terraform
+terraform plan -var-file="prod.tfvars"
+terraform apply -var-file="prod.tfvars"
+```
+
+### 🔄 Deploy com Serverless Framework (Legado)
+
+#### Deploy para AWS
 ```bash
 npm run deploy
 ```
 
-### Deploy para ambiente específico
+#### Deploy para ambiente específico
 ```bash
 serverless deploy --stage prod
 ```
@@ -101,13 +129,29 @@ faas-serverless-architecture/
 │   │   └── getProductById.js
 │   └── data/
 │       └── products.js
-├── serverless.yml
+├── terraform/           # 🆕 Infraestrutura como Código
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── lambda.tf
+│   ├── outputs.tf
+│   ├── prod.tfvars
+│   ├── staging.tfvars
+│   └── README.md
+├── serverless.yml       # 🔄 Legado
 ├── package.json
 └── README.md
 ```
 
 ## 🔧 Comandos Úteis
 
+### 🆕 Terraform (Recomendado)
+- `terraform init` - Inicializar Terraform
+- `terraform plan` - Verificar plano de mudanças
+- `terraform apply` - Aplicar mudanças
+- `terraform destroy` - Remover recursos
+- `terraform output` - Ver outputs
+
+### 🔄 Serverless Framework (Legado)
 - `npm run deploy` - Deploy para AWS
 - `npm run remove` - Remover recursos da AWS
 - `npm run logs` - Ver logs das funções
@@ -123,7 +167,36 @@ serverless logs -f getProductById
 
 ## 🗑️ Limpeza
 
+### 🆕 Terraform (Recomendado)
+Para remover todos os recursos:
+```bash
+cd terraform
+terraform destroy
+```
+
+### 🔄 Serverless Framework (Legado)
 Para remover todos os recursos da AWS:
 ```bash
 npm run remove
 ```
+
+## 🌍 Portabilidade entre Provedores
+
+Com o Terraform, você pode facilmente migrar para outros provedores:
+
+### Azure Functions
+- Substituir provider `aws` por `azurerm`
+- Adaptar recursos para Azure Functions
+- Usar Azure API Management
+
+### Google Cloud Functions
+- Substituir provider `aws` por `google`
+- Adaptar para Cloud Functions
+- Usar Cloud Run ou Cloud Functions
+
+### Benefícios da Migração
+- ✅ **Código reutilizável** entre provedores
+- ✅ **Configuração consistente** de ambientes
+- ✅ **Versionamento** da infraestrutura
+- ✅ **Rollback** fácil de mudanças
+- ✅ **Colaboração** em equipe

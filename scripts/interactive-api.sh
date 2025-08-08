@@ -38,9 +38,42 @@ show_menu() {
     echo -e "\n${BLUE}Escolha uma opção:${NC} "
 }
 
+# Função para detectar URL da API automaticamente
+detect_api_url() {
+    if [ -d "../terraform" ] || [ -d "terraform" ]; then
+        echo -e "${CYAN}Detectando URL da API via Terraform...${NC}"
+        
+        # Tentar obter URL do Terraform
+        if [ -d "../terraform" ]; then
+            cd ../terraform
+        elif [ -d "terraform" ]; then
+            cd terraform
+        fi
+        
+        if [ -f "terraform.tfstate" ]; then
+            API_URL=$(terraform output -raw api_gateway_url 2>/dev/null)
+            if [ ! -z "$API_URL" ]; then
+                echo -e "${GREEN}URL detectada automaticamente:${NC} $API_URL"
+                return 0
+            fi
+        fi
+        
+        # Voltar ao diretório original
+        cd - > /dev/null
+    fi
+    
+    return 1
+}
+
 # Função para configurar URL da API
 configure_api_url() {
     echo -e "\n${CYAN}=== CONFIGURAR URL DA API ===${NC}"
+    
+    # Tentar detectar automaticamente
+    if detect_api_url; then
+        echo -e "${GREEN}URL configurada automaticamente!${NC}"
+        return
+    fi
     
     if [ -z "$API_URL" ]; then
         echo -e "${YELLOW}URL da API não configurada.${NC}"
@@ -392,6 +425,13 @@ main() {
         echo -e "Para instalar no macOS: brew install jq"
         echo -e "Para instalar no Ubuntu: sudo apt-get install jq"
         echo -e ""
+    fi
+    
+    # Tentar detectar URL da API automaticamente no início
+    if detect_api_url; then
+        echo -e "${GREEN}✅ URL da API detectada automaticamente!${NC}"
+        echo -e "${BLUE}Pressione Enter para continuar...${NC}"
+        read -r
     fi
     
     # Loop principal

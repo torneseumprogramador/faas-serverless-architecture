@@ -1,7 +1,9 @@
-const AWS = require('aws-sdk');
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBDocumentClient, ScanCommand, GetCommand, PutCommand, UpdateCommand, DeleteCommand } = require('@aws-sdk/lib-dynamodb');
 
 // Configurar DynamoDB
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+const client = new DynamoDBClient({ region: process.env.AWS_REGION || 'sa-east-1' });
+const dynamodb = DynamoDBDocumentClient.from(client);
 const TABLE_NAME = process.env.DYNAMODB_TABLE;
 
 class ProductRepository {
@@ -12,7 +14,7 @@ class ProductRepository {
     };
     
     try {
-      const result = await dynamodb.scan(params).promise();
+      const result = await dynamodb.send(new ScanCommand(params));
       return result.Items || [];
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
@@ -30,7 +32,7 @@ class ProductRepository {
     };
     
     try {
-      const result = await dynamodb.get(params).promise();
+      const result = await dynamodb.send(new GetCommand(params));
       return result.Item;
     } catch (error) {
       console.error('Erro ao buscar produto:', error);
@@ -56,7 +58,7 @@ class ProductRepository {
     };
     
     try {
-      await dynamodb.put(params).promise();
+      await dynamodb.send(new PutCommand(params));
       return params.Item;
     } catch (error) {
       console.error('Erro ao criar produto:', error);
@@ -96,7 +98,7 @@ class ProductRepository {
     };
     
     try {
-      const result = await dynamodb.update(params).promise();
+      const result = await dynamodb.send(new UpdateCommand(params));
       return result.Attributes;
     } catch (error) {
       console.error('Erro ao atualizar produto:', error);
@@ -114,7 +116,7 @@ class ProductRepository {
     };
     
     try {
-      await dynamodb.delete(params).promise();
+      await dynamodb.send(new DeleteCommand(params));
       return { success: true, message: 'Produto deletado com sucesso' };
     } catch (error) {
       console.error('Erro ao deletar produto:', error);

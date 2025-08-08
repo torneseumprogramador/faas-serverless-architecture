@@ -29,6 +29,19 @@ deploy-prod: ## Deploy para ambiente de produção
 	@echo "$(RED)Fazendo deploy para PRODUÇÃO...$(NC)"
 	cd terraform && ./deploy.sh prod
 
+# Comandos de teste
+test-interactive: ## Executar script interativo para testar API
+	@echo "$(CYAN)Iniciando script interativo da API...$(NC)"
+	./scripts/interactive-api.sh
+
+test-url: ## Mostrar URL da API
+	@echo "$(GREEN)URL da API:$(NC)"
+	@cd terraform && terraform output -raw api_gateway_url
+
+test-endpoints: ## Mostrar todos os endpoints da API
+	@echo "$(GREEN)Endpoints da API:$(NC)"
+	@cd terraform && terraform output -json api_endpoints | jq -r 'to_entries[] | "\(.key): \(.value)"'
+
 destroy-dev: ## Destruir infraestrutura de desenvolvimento
 	@echo "$(YELLOW)Destruindo infraestrutura de desenvolvimento...$(NC)"
 	cd terraform && ./destroy.sh dev

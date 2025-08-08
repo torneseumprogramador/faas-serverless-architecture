@@ -301,22 +301,26 @@ O projeto segue uma arquitetura em camadas bem definida:
 
 3. **Services** (`src/services/`)
    - Contêm a lógica de negócio
-   - Implementam validações e regras
    - Orquestram operações complexas
+   - Utilizam entidades para validação
 
-4. **Repositories** (`src/repositories/`)
+4. **Entities** (`src/entities/`)
+   - Definem estrutura dos dados
+   - Implementam validações e normalizações
+   - Garantem consistência dos dados
+
+5. **Repositories** (`src/repositories/`)
    - Abstraem acesso a dados
    - Implementam operações CRUD
    - Isolam detalhes do DynamoDB
 
-5. **Utils** (`src/utils/`)
+6. **Utils** (`src/utils/`)
    - Funções utilitárias reutilizáveis
-   - Validações e normalizações
    - Helpers compartilhados
 
 ### 🔄 Fluxo de Dados
 ```
-HTTP Request → Handler → Controller → Service → Repository → DynamoDB
+HTTP Request → Handler → Controller → Service → Entity → Repository → DynamoDB
 ```
 
 ### 🎯 Benefícios da Arquitetura
@@ -343,8 +347,10 @@ faas-serverless-architecture/
 │   │   └── productService.js
 │   ├── repositories/      # Repositories para acesso a dados
 │   │   └── productRepository.js
+│   ├── entities/          # Entidades com estrutura e validações
+│   │   ├── Product.js
+│   │   └── index.js
 │   └── utils/             # Utilitários
-│       └── productValidation.js
 ├── scripts/               # Scripts de teste e automação
 │   ├── interactive-api.sh # Script interativo para testar API
 │   └── README.md          # Documentação dos scripts

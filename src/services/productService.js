@@ -1,5 +1,5 @@
 const ProductRepository = require('../repositories/productRepository');
-const { validateProduct, normalizeProductData } = require('../utils/productValidation');
+const { Product } = require('../entities');
 
 class ProductService {
   constructor() {
@@ -53,31 +53,25 @@ class ProductService {
   // Criar produto
   async createProduct(productData) {
     try {
-      // Normalizar dados
-      const normalizedData = normalizeProductData(productData);
+      // Gerar ID único
+      const id = await this.productRepository.generateId();
       
-      // Validar dados do produto
-      const validation = validateProduct(normalizedData, false);
+      // Criar instância da entidade Product
+      const product = new Product({
+        ...productData,
+        id
+      });
+      
+      // Normalizar e validar
+      product.normalize();
+      const validation = product.validate();
+      
       if (!validation.isValid) {
         throw new Error(`Dados inválidos: ${validation.errors.join(', ')}`);
       }
       
-      // Gerar ID único
-      const id = await this.productRepository.generateId();
-      
-      // Preparar dados do produto
-      const product = {
-        id,
-        name: normalizedData.name,
-        description: normalizedData.description,
-        price: normalizedData.price,
-        category: normalizedData.category,
-        inStock: normalizedData.inStock !== undefined ? normalizedData.inStock : true,
-        image: normalizedData.image || null
-      };
-      
-      // Criar produto
-      const createdProduct = await this.productRepository.create(product);
+      // Criar produto no repositório
+      const createdProduct = await this.productRepository.create(product.toObject());
       
       return {
         success: true,
@@ -106,23 +100,29 @@ class ProductService {
       }
 
       // Validar se há pelo menos um campo para atualizar
-      const allowedFields = ['name', 'description', 'price', 'category', 'inStock', 'image'];
+      const allowedFields = Product.getOptionalFields().filter(field => field !== 'id');
       const fieldsToUpdate = Object.keys(updateData).filter(field => allowedFields.includes(field));
       
       if (fieldsToUpdate.length === 0) {
         throw new Error('Nenhum campo válido para atualização fornecido');
       }
 
-      // Normalizar dados
-      const normalizedData = normalizeProductData(updateData);
-      
-      // Validar dados do produto (apenas os campos que estão sendo atualizados)
-      const validationData = {};
-      fieldsToUpdate.forEach(field => {
-        validationData[field] = normalizedData[field];
+      // Criar instância da entidade com dados existentes + atualizações
+      const product = new Product({
+        ...existingProduct,
+        ...updateData
       });
       
-      const validation = validateProduct(validationData, true);
+      // Normalizar e validar apenas os campos que estão sendo atualizados
+      product.normalize();
+      
+      // Validar apenas os campos que estão sendo atualizados
+      const validationData = new Product();
+      fieldsToUpdate.forEach(field => {
+        validationData[field] = product[field];
+      });
+      
+      const validation = validationData.validate();
       if (!validation.isValid) {
         throw new Error(`Dados inválidos: ${validation.errors.join(', ')}`);
       }
@@ -130,7 +130,7 @@ class ProductService {
       // Preparar dados para atualização
       const updates = {};
       fieldsToUpdate.forEach(field => {
-        updates[field] = normalizedData[field];
+        updates[field] = product[field];
       });
       
       // Atualizar produto

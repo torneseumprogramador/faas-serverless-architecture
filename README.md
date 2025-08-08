@@ -387,9 +387,48 @@ Este projeto demonstra os seguintes conceitos:
    - Logging e monitoring
    - Security best practices
 
+## 👨‍🏫 Sobre o Professor
+
+**Prof. Danilo Aparecido** é instrutor na plataforma [Torne-se um Programador](https://www.torneseumprogramador.com.br/), especializado em arquiteturas de software, desenvolvimento de sistemas escaláveis e tecnologias modernas como serverless computing.
+
+## 📚 Curso Completo
+
+Para aprender mais sobre arquiteturas de software, serverless computing e aprofundar seus conhecimentos, acesse o curso completo:
+
+**[Arquiteturas de Software Modernas](https://www.torneseumprogramador.com.br/cursos/arquiteturas_software)**
+
+## 🎓 Aprendizados do Curso
+
+Este projeto demonstra os seguintes conceitos aprendidos no curso:
+
+1. **Serverless Architecture**
+   - Function as a Service (FaaS)
+   - Event-driven programming
+   - Pay-per-use model
+   - AWS Lambda e API Gateway
+
+2. **Infrastructure as Code (IaC)**
+   - Terraform para provisionamento
+   - Versionamento de infraestrutura
+   - Multi-environment deployment
+   - Cloud-agnostic approach
+
+3. **Arquitetura em Camadas**
+   - Separação de responsabilidades
+   - Clean Architecture principles
+   - Dependency injection
+   - Domain-driven design concepts
+
+4. **Boas Práticas**
+   - Error handling robusto
+   - Input validation
+   - Logging e monitoring
+   - Security best practices
+   - Code organization
+
 ## 🤝 Contribuição
 
-Este projeto foi desenvolvido como demonstração de arquitetura serverless. Contribuições são bem-vindas através de issues e pull requests.
+Este projeto foi desenvolvido como parte do curso de Arquiteturas de Software Modernas. Contribuições são bem-vindas através de issues e pull requests.
 
 ## 📄 Licença
 
@@ -397,4 +436,4 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
-**Desenvolvido com ❤️ para demonstrar arquiteturas serverless modernas** 🚀
+**Desenvolvido com ❤️ para o curso de Arquiteturas de Software do [Torne-se um Programador](https://www.torneseumprogramador.com.br/)** 🚀

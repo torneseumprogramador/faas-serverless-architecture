@@ -8,13 +8,7 @@ terraform {
     }
   }
   
-  # Backend local para desenvolvimento
-  # Para usar S3, descomente as linhas abaixo e crie o bucket
-  # backend "s3" {
-  #   bucket = "faas-terraform-state"
-  #   key    = "prod/terraform.tfstate"
-  #   region = "sa-east-1"
-  # }
+
 }
 
 provider "aws" {

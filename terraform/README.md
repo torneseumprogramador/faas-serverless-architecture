@@ -9,7 +9,6 @@ Este diretório contém a configuração Terraform para provisionar a infraestru
 - **API Gateway:** REST API com endpoints configurados
 - **CloudWatch:** Log Groups para monitoramento
 - **IAM:** Roles e políticas de segurança
-- **S3:** Bucket para armazenamento (opcional)
 
 ### Estrutura de Arquivos
 ```
@@ -28,7 +27,6 @@ terraform/
 ### Pré-requisitos
 1. **Terraform** instalado (versão >= 1.0)
 2. **AWS CLI** configurado
-3. **Bucket S3** para armazenar o state (opcional)
 
 ### Deploy para Desenvolvimento
 ```bash
@@ -183,9 +181,8 @@ terraform init -reconfigure
 
 ## 📝 Próximos Passos
 
-1. **Configurar Backend S3** para state remoto
-2. **Adicionar CI/CD** com GitHub Actions
-3. **Implementar Workspaces** para múltiplos ambientes
-4. **Adicionar Validações** de variáveis
-5. **Configurar Alertas** CloudWatch
-6. **Implementar Backup** automático
+1. **Adicionar CI/CD** com GitHub Actions
+2. **Implementar Workspaces** para múltiplos ambientes
+3. **Adicionar Validações** de variáveis
+4. **Configurar Alertas** CloudWatch
+5. **Implementar Backup** automático

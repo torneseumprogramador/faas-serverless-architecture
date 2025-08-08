@@ -77,7 +77,15 @@ terraform apply
 
 ## 🧪 Teste Local
 
-### Testar API Deployada
+### Script Interativo (Recomendado)
+```bash
+# Executar script interativo
+./scripts/interactive-api.sh
+```
+
+O script oferece uma interface amigável para testar todos os endpoints da API.
+
+### Testar API Deployada (Manual)
 ```bash
 # Listar produtos
 curl -X GET https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products
@@ -87,6 +95,13 @@ curl -X GET https://[api-id].execute-api.sa-east-1.amazonaws.com/dev/products/1
 ```
 
 Substitua `[api-id]` pelo ID da sua API (mostrado no output do Terraform).
+
+### 📜 Scripts Disponíveis
+
+- **`scripts/interactive-api.sh`** - Script interativo para testar a API
+- **`scripts/README.md`** - Documentação detalhada dos scripts
+
+Veja a documentação completa em: [scripts/README.md](scripts/README.md)
 
 ## 📡 Endpoints
 
@@ -330,6 +345,9 @@ faas-serverless-architecture/
 │   │   └── productRepository.js
 │   └── utils/             # Utilitários
 │       └── productValidation.js
+├── scripts/               # Scripts de teste e automação
+│   ├── interactive-api.sh # Script interativo para testar API
+│   └── README.md          # Documentação dos scripts
 ├── terraform/             # Infraestrutura como Código
 │   ├── main.tf
 │   ├── variables.tf
@@ -338,8 +356,11 @@ faas-serverless-architecture/
 │   ├── outputs.tf
 │   ├── prod.tfvars
 │   ├── staging.tfvars
+│   ├── terraform.tfvars
+│   ├── terraform.tfvars.example
 │   ├── deploy.sh
 │   ├── destroy.sh
+│   ├── .gitignore
 │   └── README.md
 ├── Makefile            # Comandos automatizados
 ├── package.json
